@@ -1,0 +1,40 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: evidence-service
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/resq_evidence}
+      auto-index-creation: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 15MB
+
+gcp:
+  project-id: ${GCP_PROJECT_ID:resq-enterprise-cloud}
+  storage:
+    bucket-name: ${GCS_BUCKET_NAME:resq-production-evidence}
+  firestore:
+    collection-name: system_events
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${random.value}
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+    register-with-eureka: ${EUREKA_REGISTER:true}
+    fetch-registry: ${EUREKA_FETCH:true}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
