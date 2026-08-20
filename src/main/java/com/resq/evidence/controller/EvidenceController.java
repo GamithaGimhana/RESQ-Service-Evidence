@@ -28,10 +28,12 @@ import java.util.Map;
 public class EvidenceController {
 
     private final EvidenceService evidenceService;
+    private final com.resq.evidence.service.StorageService storageService;
 
     @Autowired
-    public EvidenceController(EvidenceService evidenceService) {
+    public EvidenceController(EvidenceService evidenceService, com.resq.evidence.service.StorageService storageService) {
         this.evidenceService = evidenceService;
+        this.storageService = storageService;
     }
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -55,6 +57,33 @@ public class EvidenceController {
     public ResponseEntity<EvidenceMetadata> getEvidenceById(@PathVariable String id) {
         EvidenceMetadata metadata = evidenceService.getEvidenceById(id);
         return ResponseEntity.ok(metadata);
+    }
+
+    @GetMapping("/local/{incidentId}/{filename}")
+    public ResponseEntity<ByteArrayResource> getLocalEvidenceFile(
+            @PathVariable String incidentId,
+            @PathVariable String filename) {
+        byte[] data = storageService.download("local-resq-storage", "incidents/" + incidentId + "/files/" + filename);
+
+        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        String lower = filename.toLowerCase();
+        if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) {
+            mediaType = MediaType.IMAGE_JPEG;
+        } else if (lower.endsWith(".png")) {
+            mediaType = MediaType.IMAGE_PNG;
+        } else if (lower.endsWith(".webp")) {
+            mediaType = MediaType.parseMediaType("image/webp");
+        } else if (lower.endsWith(".pdf")) {
+            mediaType = MediaType.APPLICATION_PDF;
+        }
+
+        ByteArrayResource resource = new ByteArrayResource(data);
+
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .contentLength(data.length)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+                .body(resource);
     }
 
     @GetMapping("/{id}/download")
