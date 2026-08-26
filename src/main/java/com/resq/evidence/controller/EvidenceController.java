@@ -59,11 +59,16 @@ public class EvidenceController {
         return ResponseEntity.ok(metadata);
     }
 
-    @GetMapping("/local/{incidentId}/{filename}")
+    @GetMapping({"/local/{incidentId}/{filename}", "/file/{incidentId}/{filename}"})
     public ResponseEntity<ByteArrayResource> getLocalEvidenceFile(
-            @PathVariable String incidentId,
-            @PathVariable String filename) {
-        byte[] data = storageService.download("local-resq-storage", "incidents/" + incidentId + "/files/" + filename);
+            @PathVariable("incidentId") String incidentId,
+            @PathVariable("filename") String filename) {
+        byte[] data;
+        try {
+            data = storageService.download("resq-production-evidence", "incidents/" + incidentId + "/files/" + filename);
+        } catch (Exception e) {
+            data = storageService.download("local-resq-storage", "incidents/" + incidentId + "/files/" + filename);
+        }
 
         MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
         String lower = filename.toLowerCase();
