@@ -14,7 +14,7 @@ spring:
       max-request-size: 15MB
 
 gcp:
-  project-id: ${GCP_PROJECT_ID:resq-enterprise-cloud}
+  project-id: ${GCP_PROJECT_ID:resq-enterprise-cloud-01}
   storage:
     bucket-name: ${GCS_BUCKET_NAME:resq-production-evidence}
   firestore:
