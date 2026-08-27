@@ -48,13 +48,13 @@ public class EvidenceController {
     }
 
     @GetMapping("/incidents/{incidentId}")
-    public ResponseEntity<List<EvidenceMetadata>> getEvidenceByIncident(@PathVariable String incidentId) {
+    public ResponseEntity<List<EvidenceMetadata>> getEvidenceByIncident(@PathVariable("incidentId") String incidentId) {
         List<EvidenceMetadata> list = evidenceService.getEvidenceByIncident(incidentId);
         return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EvidenceMetadata> getEvidenceById(@PathVariable String id) {
+    public ResponseEntity<EvidenceMetadata> getEvidenceById(@PathVariable("id") String id) {
         EvidenceMetadata metadata = evidenceService.getEvidenceById(id);
         return ResponseEntity.ok(metadata);
     }
@@ -92,7 +92,7 @@ public class EvidenceController {
     }
 
     @GetMapping("/{id}/download")
-    public ResponseEntity<ByteArrayResource> downloadEvidence(@PathVariable String id) {
+    public ResponseEntity<ByteArrayResource> downloadEvidence(@PathVariable("id") String id) {
         EvidenceService.EvidenceDownload download = evidenceService.downloadEvidence(id);
 
         MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
@@ -113,7 +113,7 @@ public class EvidenceController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEvidence(@PathVariable String id) {
+    public ResponseEntity<Void> deleteEvidence(@PathVariable("id") String id) {
         evidenceService.deleteEvidence(id);
         return ResponseEntity.noContent().build();
     }
